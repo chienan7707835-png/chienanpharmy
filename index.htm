@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健安藥局慢箋網路平台</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; }
+        .container { display: flex; flex-direction: column; height: 100vh; }
+        #top-frame { height: 120px; border: none; width: 100%; }
+        #main-frame { flex: 1; border: none; width: 100%; }
+        @media (max-width: 600px) { #top-frame { height: 150px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <iframe src="top.htm" id="top-frame" name="topFrame"></iframe>
+        <iframe src="sent.htm" id="main-frame" name="mainFrame"></iframe>
+    </div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>健安藥局 - 慢箋查詢系統</title>
+  <style>
+    :root { --primary-color: #2c3e50; --accent-color: #27ae60; }
+    body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #ecf0f1; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .card { padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    h2 { color: var(--primary-color); text-align: center; margin-bottom: 1.5rem; }
+    input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #bdc3c7; border-radius: 6px; box-sizing: border-box; font-size: 1.1rem; text-transform: uppercase; }
+    input:focus { border-color: var(--accent-color); outline: none; }
+    button { width: 100%; padding: 12px; background-color: var(--accent-color); color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; transition: background 0.3s; }
+    button:hover { background-color: #219150; }
+    button:disabled { background-color: #bdc3c7; }
+    #result { margin-top: 1.5rem; padding: 1rem; border-radius: 6px; display: none; white-space: pre-wrap; line-height: 1.6; font-size: 1rem; }
+    .status-loading { background-color: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; }
+    .status-success { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; border-left: 5px solid var(--accent-color); }
+
+    body {
+
+        background-image: url('bg.jpg');
+
+        background-attachment: fixed;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+<font size=4 color=red>本領藥日為最早提前領藥日，可能受到缺藥或是物流配送延誤影響<br><b>正確領藥日請來電047707835或是LINE（ID:7707835）諮詢</b></font>
+  <h2>慢箋收單查詢</h2>
+  <input type="text" id="idInput" placeholder="請輸入身分證字號" maxlength="10">
+  <button id="queryBtn" onclick="doSearch()">開始查詢</button>
+  <div id="result"></div>
+</div>
+
+<script>
+
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxbiy-aIU8lEWsEsnmhLE2EhPY1mOkYiRRXAeBG6YULmXEEt0KjIISCkIOvUZv2icp3/exec";
+
+  async function doSearch() {
+    const idInput = document.getElementById('idInput');
+    const btn = document.getElementById('queryBtn');
+    const resultDiv = document.getElementById('result');
+    const id = idInput.value.trim().toUpperCase();
+
+    if (!id) {
+      alert("請輸入身分證字號");
+      return;
+    }
+
+    // UI 狀態切換
+    btn.disabled = true;
+    btn.innerText = "查詢中...";
+    resultDiv.style.display = "block";
+    resultDiv.className = "status-loading";
+    resultDiv.innerText = "正在連線資料庫，請稍候...";
+
+    try {
+      const response = await fetch(`${GAS_URL}?id=${id}`);
+      const data = await response.json();
+
+      resultDiv.className = "status-success";
+      resultDiv.innerText = data.message || data.error;
+    } catch (err) {
+      resultDiv.style.backgroundColor = "#f2dede";
+      resultDiv.style.color = "#a94442";
+      resultDiv.innerText = "連線失敗，請檢查網路或 API 設定。";
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "開始查詢";
+    }
+  }
+</script>
+
+</body>
+</html>
