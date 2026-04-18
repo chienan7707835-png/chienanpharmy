@@ -6,74 +6,60 @@
   <title>健安藥局 - 慢箋查詢系統</title>
   <style>
     :root { --primary-color: #2c3e50; --accent-color: #27ae60; }
-    body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #ecf0f1; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .card { padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #ecf0f1; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-image: url('bg.jpg'); background-attachment: fixed; }
+    .card { padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px;}
     h2 { color: var(--primary-color); text-align: center; margin-bottom: 1.5rem; }
-    input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #bdc3c7; border-radius: 6px; box-sizing: border-box; font-size: 1.1rem; text-transform: uppercase; }
-    input:focus { border-color: var(--accent-color); outline: none; }
-    button { width: 100%; padding: 12px; background-color: var(--accent-color); color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; transition: background 0.3s; }
-    button:hover { background-color: #219150; }
-    button:disabled { background-color: #bdc3c7; }
-    #result { margin-top: 1.5rem; padding: 1rem; border-radius: 6px; display: none; white-space: pre-wrap; line-height: 1.6; font-size: 1rem; }
+    input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #bdc3c7; border-radius: 6px; box-sizing: border-box; font-size: 1.1rem; }
+    button { width: 100%; padding: 12px; background-color: var(--accent-color); color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
+    #result { margin-top: 1.5rem; padding: 1rem; border-radius: 6px; display: none; white-space: pre-wrap; }
     .status-loading { background-color: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; }
-    .status-success { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; border-left: 5px solid var(--accent-color); }
-
-    body {
-
-        background-image: url('bg.jpg');
-
-        background-attachment: fixed;
-    }
-</style>
+    .status-success { background-color: #dff0d8; color: #3c763d; border-left: 5px solid var(--accent-color); }
+  </style>
 </head>
 <body>
 
 <div class="card">
-<font size=4 color=red>本領藥日為最早提前領藥日，可能受到缺藥或是物流配送延誤影響<br><b>正確領藥日請來電047707835或是LINE（ID:047707835）諮詢</b></font>
+  <font size=4 color=red>本領藥日為最早提前領藥日，可能受到缺藥或是物流配送延誤影響<br><b>正確領藥日請來電047707835或是LINE（ID:047707835）諮詢</b></font><br>
   <h2>慢箋收單查詢</h2>
-  <input type="text" id="idInput" placeholder="請輸入身分證字號" maxlength="10">
+  <input type="text" id="idLast4" placeholder="請輸入身分證末 4 碼" maxlength="4">
+  <input type="text" id="birth4" placeholder="請輸入生日4碼 (如8月2日出生填0802)" maxlength="4">
   <button id="queryBtn" onclick="doSearch()">開始查詢</button>
   <div id="result"></div>
 </div>
 
 <script>
 
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbyZyZgm8jqXRV2IZ6-xoHlzd14GU9pqWeFO7YQx8BjvEHXT7Xmp3roCkJRxMUFDGr2z/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzUHb0CeCf8ND4xBW_zmUipYTIOrwUbynXsvR5ZjTzRSUf9Fdmz2kXiKs4tg9vxEYZO/exec";
 
   async function doSearch() {
-    const idInput = document.getElementById('idInput');
+    const idLast4 = document.getElementById('idLast4').value.trim();
+    const birth4 = document.getElementById('birth4').value.trim();
     const btn = document.getElementById('queryBtn');
     const resultDiv = document.getElementById('result');
-    const id = idInput.value.trim().toUpperCase();
 
-    if (!id) {
-      alert("請輸入身分證字號");
+    if (idLast4.length !== 4 || birth4.length !== 4) {
+      alert("請輸入完整 4 碼驗證資訊");
       return;
     }
 
-    // UI 狀態切換
     btn.disabled = true;
-    btn.innerText = "查詢中...";
+    btn.innerText = "驗證中...";
     resultDiv.style.display = "block";
     resultDiv.className = "status-loading";
-    resultDiv.innerText = "正在連線資料庫，請稍候...";
+    resultDiv.innerText = "連線中，請稍候...";
 
     try {
-      const response = await fetch(`${GAS_URL}?id=${id}`);
+      const response = await fetch(`${GAS_URL}?idLast4=${idLast4}&birth4=${birth4}`);
       const data = await response.json();
-
       resultDiv.className = "status-success";
       resultDiv.innerText = data.message || data.error;
     } catch (err) {
-      resultDiv.style.backgroundColor = "#f2dede";
-      resultDiv.style.color = "#a94442";
-      resultDiv.innerText = "連線失敗，請檢查網路或 API 設定。";
+      resultDiv.innerText = "連線失敗，請檢查網路。";
     } finally {
       btn.disabled = false;
       btn.innerText = "開始查詢";
     }
   }
 </script>
-
 </body>
 </html>
