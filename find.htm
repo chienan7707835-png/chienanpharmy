@@ -9,7 +9,27 @@
     body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #ecf0f1; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-image: url('bg.jpg'); background-attachment: fixed; }
     .card { padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px;}
     h2 { color: var(--primary-color); text-align: center; margin-bottom: 1.5rem; }
-    input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #bdc3c7; border-radius: 6px; box-sizing: border-box; font-size: 1.1rem; }
+input { 
+    width: 100%; 
+    padding: 12px; 
+    margin-bottom: 1rem; 
+    border: 2px solid #bdc3c7; 
+    border-radius: 6px; 
+    box-sizing: border-box; 
+    font-size: 1.1rem; /* 預設 1.1rem */
+}
+
+@media screen and (min-aspect-ratio: 20/9) {
+    input {
+        font-size: 0.6rem;
+        padding: 8px; 
+    }
+}
+@media screen and (max-width: 480px) and (min-aspect-ratio: 2/1) {
+    input {
+        font-size: 0.6rem;
+    }
+}
     button { width: 100%; padding: 12px; background-color: var(--accent-color); color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
     #result { margin-top: 1.5rem; padding: 1rem; border-radius: 6px; display: none; white-space: pre-wrap; }
     .status-loading { background-color: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; }
@@ -22,8 +42,7 @@
   <font size=4 color=red>本領藥日為最早提前領藥日，可能受到缺藥或是物流配送延誤影響<br><b>正確領藥日請來電047707835或是LINE（ID:047707835）諮詢</b></font><br>
   <h2>慢箋收單查詢</h2>
   <input type="text" id="idLast4" placeholder="請輸入身分證末 4 碼" maxlength="4">
-  <input type="text" id="birth4" placeholder="請輸入生日4碼 " maxlength="4">
-  <font size=2 color=blue>(↑如8月2日出生填0802)</font><br>
+  <input type="text" id="birth4" placeholder="請輸入生日4碼（如8月2日:0802） " maxlength="4">
   <button id="queryBtn" onclick="doSearch()">開始查詢</button>
   <div id="result"></div>
 </div>
